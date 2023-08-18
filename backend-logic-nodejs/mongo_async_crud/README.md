@@ -9,7 +9,7 @@ _Remember to add your .env variables in the deployed version_
 
 **Description:**
 
-This repository shares the code applied during the Youtube tutorial. The tutorial is part of a [Node.js & Express for Beginners Playlist](https://www.youtube.com/playlist?list=PL0Zuz27SZ-6PFkIxaJ6Xx_X46avTM1aYw) on my channel.  
+This repository shares the code applied during the Youtube tutorial. The tutorial is part of a [Node.js & Express for Beginners Playlist](https://www.youtube.com/playlist?list=PL0Zuz27SZ-6PFkIxaJ6Xx_X46avTM1aYw) on my channel.
 
 [YouTube Tutorial](https://youtu.be/AWlLhRQJvtw) for this repository.
 
@@ -17,4 +17,9 @@ I suggest completing my [8 hour JavaScript course tutorial video](https://youtu.
 
 ### Academic Honesty
 
-**DO NOT COPY FOR AN ASSIGNMENT** - Avoid plagiargism and adhere to the spirit of this [Academic Honesty Policy](https://www.freecodecamp.org/news/academic-honesty-policy/).
+**ROUTES**
+GET http://localhost:3500/users: must be logged in, have a token in Auth Bearer, and have appropriate role
+POST http://localhost:3500/auth: to sign in with username and pwd
+POST http://localhost:3500/register: to register with username and pwd and receive RefreshToken as a cookie and AccessToken as a response
+GET http://localhost:3500/logout: to logout
+GET http://localhost:3500/refresh: to have RefreshToken as a cookie (meaning to perform auth first), and receive new AccessToken as response
