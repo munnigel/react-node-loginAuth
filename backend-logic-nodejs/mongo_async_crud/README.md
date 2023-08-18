@@ -15,9 +15,8 @@ This repository shares the code applied during the Youtube tutorial. The tutoria
 
 I suggest completing my [8 hour JavaScript course tutorial video](https://youtu.be/EfAl9bwzVZk) if you are new to Javascript.
 
-### Academic Honesty
+### ROUTES
 
-**ROUTES**
 GET http://localhost:3500/users: must be logged in, have a token in Auth Bearer, and have appropriate role <br>
 POST http://localhost:3500/auth: to sign in with username and pwd <br>
 POST http://localhost:3500/register: to register with username and pwd and receive RefreshToken as a cookie and AccessToken as a response<br>
