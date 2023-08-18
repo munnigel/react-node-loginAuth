@@ -18,8 +18,8 @@ I suggest completing my [8 hour JavaScript course tutorial video](https://youtu.
 ### Academic Honesty
 
 **ROUTES**
-GET http://localhost:3500/users: must be logged in, have a token in Auth Bearer, and have appropriate role
-POST http://localhost:3500/auth: to sign in with username and pwd
-POST http://localhost:3500/register: to register with username and pwd and receive RefreshToken as a cookie and AccessToken as a response
-GET http://localhost:3500/logout: to logout
-GET http://localhost:3500/refresh: to have RefreshToken as a cookie (meaning to perform auth first), and receive new AccessToken as response
+GET http://localhost:3500/users: must be logged in, have a token in Auth Bearer, and have appropriate role <br>
+POST http://localhost:3500/auth: to sign in with username and pwd <br>
+POST http://localhost:3500/register: to register with username and pwd and receive RefreshToken as a cookie and AccessToken as a response<br>
+GET http://localhost:3500/logout: to logout<br>
+GET http://localhost:3500/refresh: to have RefreshToken as a cookie (meaning to perform auth first), and receive new AccessToken as response<br>
