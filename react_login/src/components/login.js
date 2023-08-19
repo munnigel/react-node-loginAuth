@@ -2,18 +2,27 @@ import React from 'react'
 import { useRef, useEffect, useState, useContext } from 'react'
 import AuthContext from '../context/authContext'
 import axios from '../api/axios'
+import {Link, useNavigate, useLocation} from 'react-router-dom'
 
 const LOGIN_URL = '/auth'
 
 const Login = () => {
   const {setAuth} = useContext(AuthContext)
+
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Get where the user is coming from. If there is no history of where the user is coming from, go to home page.
+  // For example, if user is not logged in and wants to go to /admin page, the user will be redirected to login page. 
+  // After login, the user will be redirected straight to /admin page
+  const from = location.state?.from?.pathname || '/';
+
   const userRef = useRef()
   const errorRef = useRef()
 
   const [user, setUser] = useState('')
   const [pwd, setPwd] = useState('')
   const [errMsg, setErrMsg] = useState('')
-  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     userRef.current.focus()
@@ -34,13 +43,15 @@ const Login = () => {
           withCredentials: true
         }
       )
-      console.log(JSON.stringify(response?.data))
       const accessToken = response?.data?.accessToken
       const roles = response?.data?.roles
       setAuth({user, pwd, roles, accessToken})
       setUser('')
       setPwd('')
-      setSuccess(true)
+        console.log(location)
+      // navigate to where the user is coming from or go to home page
+      navigate(from, {replace: true})
+      
     } catch (err) {
       console.log(err)
       if (!err?.response) {
