@@ -11,11 +11,13 @@ const handleLogin = async (req, res) => {
     if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
 
     const foundUser = await User.findOne({ username: user }).exec();
-    if (!foundUser) return res.sendStatus(401); //Unauthorized 
+    if (!foundUser) return res.status(401).json({"message": "User with that username not found in database"}); //Unauthorized 
+    
     // evaluate password 
     const match = await bcrypt.compare(pwd, foundUser.password);
+
     if (match) {
-        const roles = Object.values(foundUser.roles).filter(Boolean);
+        const roles = Object.values(foundUser.roles).filter(Boolean); //eliminate nulls in the values
 
         // create JWTs
         const accessToken = jwt.sign(
@@ -44,7 +46,7 @@ const handleLogin = async (req, res) => {
         res.json({ roles, accessToken });
 
     } else {
-        res.sendStatus(401);
+        res.status(401).json({"message": "Password incorrect"});
     }
 
     console.log(foundUser);
