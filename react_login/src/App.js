@@ -22,10 +22,10 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout/>}>
         {/* Public Routes */}
-          <Route path="register" element={<Register/>}/>
-          <Route path="login" element={<Login/>}/>
-          <Route path="linkpage" element={<LinkPage/>}/>
-          <Route path="unauthorized" element={<Unauthorized/>} /> 
+        <Route path="register" element={<Register/>}/>
+        <Route path="login" element={<Login/>}/>
+        <Route path="linkpage" element={<LinkPage/>}/>
+        <Route path="unauthorized" element={<Unauthorized/>} /> 
 
         {/* Private Routes that require auth (taken from useContext) */}
         <Route element={<RequireAuth allowedRoles={[ROLES.User]}/>}>
