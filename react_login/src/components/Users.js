@@ -20,8 +20,10 @@ const Users = () => {
           // controller.signal allows us to cancel the request if we need to
           signal: controller.signal
         });
+
+        const userNames = response.data.map(user => user.username)
         console.log(response.data);
-        isMounted && setUsers(response.data);
+        isMounted && setUsers(userNames);
       } catch (error) {
         console.error(error);
         // if we get a 401 error, it means that our refresh token has expired, so we will redirect to login page
@@ -47,7 +49,7 @@ const Users = () => {
         users?.length ? (
           <ul>
             {
-              users.map((user, i) => <li key={i}>{user.username}</li>)
+              users.map((user, i) => <li key={i}>{user}</li>)
             }
           </ul>
         ) : (<p>No users to display</p>)
