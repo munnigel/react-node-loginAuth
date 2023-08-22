@@ -8,6 +8,7 @@ import Missing from './components/Missing';
 import RequireAuth from './components/RequireAuth';
 import Admin from './components/Admin';
 import Unauthorized from './components/Unauthorized';
+import PersistLogin from './components/PersistLogin';
 
 import {Routes, Route} from 'react-router-dom';
 
@@ -27,15 +28,18 @@ function App() {
         <Route path="linkpage" element={<LinkPage/>}/>
         <Route path="unauthorized" element={<Unauthorized/>} /> 
 
-        {/* Private Routes that require auth (taken from useContext) */}
-        <Route element={<RequireAuth allowedRoles={[ROLES.User]}/>}>
-          <Route path="/" element={<Home/>}/>
-        </Route>
-        <Route element={<RequireAuth allowedRoles={[ROLES.Editor, ROLES.Admin]}/>}>
-          <Route path="editor" element={<Editor/>}/>
-        </Route>
-        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
-          <Route path="admin" element={<Admin/>}/>
+        {/* Persist Login */}
+        <Route element={<PersistLogin/>}>
+          {/* Private Routes that require auth (taken from useContext) */}
+          <Route element={<RequireAuth allowedRoles={[ROLES.User]}/>}>
+            <Route path="/" element={<Home/>}/>
+          </Route>
+          <Route element={<RequireAuth allowedRoles={[ROLES.Editor, ROLES.Admin]}/>}>
+            <Route path="editor" element={<Editor/>}/>
+          </Route>
+          <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
+            <Route path="admin" element={<Admin/>}/>
+          </Route>
         </Route>
         
         {/* catch error route */}

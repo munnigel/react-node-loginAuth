@@ -3,6 +3,8 @@ import { useRef, useEffect, useState, useContext } from 'react'
 import AuthContext from '../context/authContext'
 import axios from '../api/axios'
 import {Link, useNavigate, useLocation} from 'react-router-dom'
+import useInput from '../hooks/useInput'
+import useToggle from '../hooks/useToggle'
 
 const LOGIN_URL = '/auth'
 
@@ -20,9 +22,13 @@ const Login = () => {
   const userRef = useRef()
   const errorRef = useRef()
 
-  const [user, setUser] = useState('')
+  // setting local storage with key 'user' and value of user input
+  const [user, reset, attributeObject] = useInput('user', '')
   const [pwd, setPwd] = useState('')
   const [errMsg, setErrMsg] = useState('')
+
+  // setting local storage of key 'persist' and value of true or false based on the checkbox
+  const [check, toggleCheck] = useToggle('persist', false)
 
   useEffect(() => {
     userRef.current.focus()
@@ -46,9 +52,9 @@ const Login = () => {
       const accessToken = response?.data?.accessToken
       const roles = response?.data?.roles
       setAuth({user, pwd, roles, accessToken})
-      setUser('')
+      reset()
       setPwd('')
-        console.log(location)
+
       // navigate to where the user is coming from or go to home page
       navigate(from, {replace: true})
       
@@ -65,8 +71,15 @@ const Login = () => {
       }
       errorRef.current.focus()  
     }
-
   }
+
+  // const togglePersist = () => {
+  //   setPersist(prev => !prev);
+  // }
+
+  // useEffect(() => {
+  //   localStorage.setItem('persist', persist)
+  // }, [persist])
 
 
   return (
@@ -82,8 +95,7 @@ const Login = () => {
           id='username' 
           ref={userRef} 
           autoComplete='off'
-          onChange={(e) => setUser(e.target.value)}
-          value={user}
+          {...attributeObject}
           required
           />
 
@@ -97,6 +109,15 @@ const Login = () => {
           />
 
           <button>Sign In</button>
+          <div className='persistCheck'>
+            <input 
+              type='checkbox' 
+              id='persist' 
+              checked={check} 
+              onChange={toggleCheck}
+            />
+            <label htmlFor='persist'>Keep me signed in</label>
+          </div>
       </form>
       <p>
         Don't have an Account? <br/>

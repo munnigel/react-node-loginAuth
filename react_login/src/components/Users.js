@@ -35,7 +35,6 @@ const Users = () => {
     // cleanup function when component is unmounted
     return () => {
       isMounted = false;
-      console.log("unmounted")
       controller.abort();
     }
   }, [])
