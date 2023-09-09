@@ -34,6 +34,10 @@ app.use(express.json());
 //middleware for cookies
 app.use(cookieParser());
 
+app.get('/working', (req, res) => {
+    res.send('Hello World!')
+})
+
 
 // routes, dont need to have verifyJWT and verifyRoles
 app.use('/register', require('./routes/register'));
