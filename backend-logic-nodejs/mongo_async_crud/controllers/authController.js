@@ -40,7 +40,7 @@ const handleLogin = async (req, res) => {
         const result = await foundUser.save();
 
         // Creates Secure Cookie with refresh token
-        res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 }); //secure: true
+        res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 }); //secure: true, 
 
         // Send authorization roles and access token to user
         res.json({ roles, accessToken });
