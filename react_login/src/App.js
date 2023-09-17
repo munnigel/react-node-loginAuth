@@ -3,7 +3,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import LinkPage from './components/LinkPage';
 import Home from './components/Home';
-import Editor from './components/Editor';
+import Upload from './components/Upload';
 import Missing from './components/Missing';
 import RequireAuth from './components/RequireAuth';
 import Admin from './components/Admin';
@@ -35,7 +35,7 @@ function App() {
             <Route path="/" element={<Home/>}/>
           </Route>
           <Route element={<RequireAuth allowedRoles={[ROLES.Editor, ROLES.Admin]}/>}>
-            <Route path="editor" element={<Editor/>}/>
+            <Route path="upload" element={<Upload/>}/>
           </Route>
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
             <Route path="admin" element={<Admin/>}/>
