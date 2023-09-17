@@ -19,6 +19,8 @@ const useAxiosPrivate = () => {
         if (!config.headers["Authorization"]) {
           config.headers['Authorization'] = `Bearer ${auth?.accessToken}`;
         }
+        // Store the original request body
+        config.metadata = { originalBody: config.data };
         return config;
       }, (error) => Promise.reject(error)
     )
@@ -37,6 +39,8 @@ const useAxiosPrivate = () => {
           console.log("refreshing token");
           const newAccessToken = await refresh();
           prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          // Use the stored original request body for the retry
+          prevRequest.data = prevRequest.metadata.originalBody;
           return axiosPrivate(prevRequest);
         }
         return Promise.reject(error);

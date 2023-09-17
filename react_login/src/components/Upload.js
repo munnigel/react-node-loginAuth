@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useState } from "react";
 
+
 const Upload = () => {
     const axiosPrivate = useAxiosPrivate();
 
@@ -19,8 +20,8 @@ const Upload = () => {
         const formData = new FormData();
         formData.append("file", file);
 
+
         try {
-            console.log("image upload")
             const response = await axiosPrivate.post("/image/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -28,7 +29,6 @@ const Upload = () => {
             });
             setUploadStatus(response.data.message);
 
-            console.log("image url")
 
             // Fetch the signed URL immediately after upload
             const imageName = file.name;
@@ -36,20 +36,20 @@ const Upload = () => {
             setImgUrl(imageUrlResponse.data.url);
 
         } catch (error) {
+
             console.error(error);
 
-            if (error.response) {
-                console.error(error.response.data);
-                console.error(error.response.status);
-                console.error(error.response.headers);
-            } else if (error.request) {
-                console.error(error.request);
-            } else {
-                console.error("Error", error.message);
+            // If token expired and refresh happened, retry the upload
+            // This issue happens because when /refresh happens, formData gets reset. Hence we have to rerun the handleSubmit function
+            if (error?.response?.status === 400) {
+                console.log("Token expired, retrying upload");
+                // Retry the upload with the pendingFormData
+                await handleSubmit(e);
             }
-            console.error(error.config);
         }
     };
+
+
 
     return (
         <section>
