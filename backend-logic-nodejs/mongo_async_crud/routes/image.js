@@ -21,7 +21,7 @@ const upload = multer({
 });
 
 
-router.post('/upload', upload.single('file'), verifyJWT, fileUploadController.uploadFile);
-router.get('/:imageName', fileUploadController.getFile);
+router.post('/upload', upload.array('file'), verifyJWT, fileUploadController.uploadFile);
+router.get('/', fileUploadController.getFile);
 
 module.exports = router;
