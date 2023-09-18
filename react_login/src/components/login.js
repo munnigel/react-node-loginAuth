@@ -5,6 +5,7 @@ import axios from '../api/axios'
 import {Link, useNavigate, useLocation} from 'react-router-dom'
 import useInput from '../hooks/useInput'
 import useToggle from '../hooks/useToggle'
+import { Input, Button } from 'antd';
 
 const LOGIN_URL = '/auth'
 
@@ -65,7 +66,7 @@ const Login = () => {
       } else if (err?.response.status === 400) {
         setErrMsg('Missing username or password')
       } else if (err?.response.status === 401) {
-        setErrMsg('Unauthorized')
+        setErrMsg('Invalid User Name or Password')
       } else {
         setErrMsg('Server error. Login failed.')
       }
@@ -88,9 +89,9 @@ const Login = () => {
         {errMsg}
       </p>
       <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
+      <form>
         <label htmlFor='username'>Username:</label>
-        <input 
+        <Input 
           type='text' 
           id='username' 
           ref={userRef} 
@@ -100,7 +101,7 @@ const Login = () => {
           />
 
         <label htmlFor='password'>Password:</label>
-        <input 
+        <Input 
           type='password' 
           id='password' 
           onChange={(e) => setPwd(e.target.value)}
@@ -108,7 +109,7 @@ const Login = () => {
           required
           />
 
-          <button>Sign In</button>
+          <Button size='large' onClick={handleSubmit}>Sign In</Button>
           <div className='persistCheck'>
             <input 
               type='checkbox' 

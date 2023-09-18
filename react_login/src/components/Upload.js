@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { Upload as AntUpload, Button, message, Modal } from 'antd';
+import { Upload as AntUpload, Button, message, Modal, Space, Spin } from 'antd';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Dragger } = AntUpload;
@@ -9,30 +9,19 @@ const { Dragger } = AntUpload;
 
 const Upload = () => {
     const axiosPrivate = useAxiosPrivate();
-    const [uploadStatus, setUploadStatus] = useState("");
-    const [imgUrl, setImgUrl] = useState("");
+    const [imgUrls, setImgUrls] = useState([]);
     const [fileList, setFileList] = useState([]);
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     // delay is used to retry the upload if the token expired and /refresh happened
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     // keep track of all the files that are being uploaded
     const handleFileChange = info => {
-        // let fileList = [...info.fileList];
-        // fileList = fileList.slice(-1);
-        // setFileList(fileList);
         let fileList = [...info.fileList];
-        fileList = fileList.slice(-1);
-        fileList = fileList.map(file => {
-            if (file.response) {
-                // Component will show file.url as link
-                file.url = file.response.url;
-            }
-            return file;
-        }
-        );
+        // fileList = fileList.slice(-1);
         setFileList(fileList);
     };
 
@@ -61,33 +50,38 @@ const Upload = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const file = fileList[0]?.originFileObj;
-        if (!file) {
-            message.error("Please select a file before uploading.");
+        if (fileList.length === 0) {
+            message.error("Please select files before uploading.");
             return;
         }
 
         const formData = new FormData();
-        formData.append("file", file);
-
+        fileList.forEach((fileItem, index) => {
+            formData.append(`file`, fileItem.originFileObj);
+        });
 
         try {
+            await delay(200);
             const response = await axiosPrivate.post("/image/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percentCompleted);
+                }
             });
-            setUploadStatus(response.data.message);
 
-            // Extract the uniqueFilename from the response
-            const uniqueFileName = response.data.uniqueFileName;
+            const uniqueFileNames = response.data.files.join(',');
 
+            const imageUrlResponse = await axiosPrivate.get(`/image?imageNames=${uniqueFileNames}`);
+            // Assuming the backend returns an array of URLs
+            setImgUrls(imageUrlResponse.data.urls);
 
-            const imageUrlResponse = await axiosPrivate.get(`/image/${uniqueFileName}`);
-            setImgUrl(imageUrlResponse.data.url);
             setFileList([]);
-
-        } catch (error) {
+            setUploadProgress(0);
+    
+            } catch (error) {
 
             console.error(error);
 
@@ -113,6 +107,7 @@ const Upload = () => {
                 beforeUpload={() => false} // Prevent automatic upload
                 showUploadList={false} // Disable the default upload list
                 accept='image/jpg, image/jpeg, image/png'
+                multiple={true}
             >
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -138,10 +133,20 @@ const Upload = () => {
                 </ul>
 
             <Button type="primary" onClick={handleSubmit} disabled={fileList.length === 0} style={{ marginTop: '10px', width: '100%' }}>Upload</Button>
-            <div>{uploadStatus}</div>
         </div>
 
-        {imgUrl && <img src={imgUrl} alt="S3 image" style={{ marginTop: '20px' }} />}
+        {uploadProgress > 0 && (
+            <Space size='large' style={{margin: "50px 0px", display: 'flex', justifyContent: 'Center', alignItems: 'Center'}}>
+                <Spin size='large' >
+                    <div className="content" />
+                </Spin>
+            </Space>
+        )}
+
+        {imgUrls.map((url, index) => (
+            <img key={index} src={url} alt={`S3 image ${index}`} style={{ marginTop: '20px', marginRight: '10px' }} />
+        ))}
+
 
         <Modal
             open={previewVisible}
