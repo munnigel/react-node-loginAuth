@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const fileUploadController = require('../controllers/imageController');
+const verifyJWT = require('../middleware/verifyJWT');
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -20,7 +21,7 @@ const upload = multer({
 });
 
 
-router.post('/upload', upload.single('file'), fileUploadController.uploadFile);
+router.post('/upload', upload.single('file'), verifyJWT, fileUploadController.uploadFile);
 router.get('/:imageName', fileUploadController.getFile);
 
 module.exports = router;

@@ -3,7 +3,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import LinkPage from './components/LinkPage';
 import Home from './components/Home';
-import Upload from './components/Upload';
+import UploadPage from './components/Upload';
 import Missing from './components/Missing';
 import RequireAuth from './components/RequireAuth';
 import Admin from './components/Admin';
@@ -11,6 +11,7 @@ import Unauthorized from './components/Unauthorized';
 import PersistLogin from './components/PersistLogin';
 
 import {Routes, Route} from 'react-router-dom';
+
 
 const ROLES = {
   'User': 2001,
@@ -35,7 +36,7 @@ function App() {
             <Route path="/" element={<Home/>}/>
           </Route>
           <Route element={<RequireAuth allowedRoles={[ROLES.Editor, ROLES.Admin]}/>}>
-            <Route path="upload" element={<Upload/>}/>
+            <Route path="upload" element={<UploadPage/>}/>
           </Route>
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
             <Route path="admin" element={<Admin/>}/>

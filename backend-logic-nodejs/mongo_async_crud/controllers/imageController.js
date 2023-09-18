@@ -2,8 +2,12 @@ const s3 = require('../config/s3Config');
 const File = require('../model/ImageData');
 
 const uploadFile = (req, res) => {
-    const file = req.file; // Assuming you're using something like multer for file handling
 
+    if (!req.file) {
+        return res.status(411).json({ error: 'No file uploaded' });
+    }
+    // Assuming you're using something like multer for file handling
+    const file = req?.file
     const params = {
         Bucket: 'imagebucket-test1',
         Key: `${file.originalname}`,
