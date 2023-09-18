@@ -1,5 +1,6 @@
 const s3 = require('../config/s3Config');
 const File = require('../model/ImageData');
+const { createLog } = require('./imageLogController');
 
 const uploadFile = (req, res) => {
 
@@ -35,6 +36,9 @@ const uploadFile = (req, res) => {
             }
             res.json({ message: 'Successfully uploaded and saved!', file: savedFile });
         });
+
+        // Create a log entry
+        createLog(file.originalname, data.Location, req.user);
     });
 };
 

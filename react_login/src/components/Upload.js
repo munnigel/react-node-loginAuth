@@ -15,12 +15,24 @@ const Upload = () => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
 
+    // delay is used to retry the upload if the token expired and /refresh happened
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // for now we only allow one file to be uploaded, so we only need to keep track of one file
     const handleFileChange = info => {
         let fileList = [...info.fileList];
         fileList = fileList.slice(-1);
         setFileList(fileList);
     };
 
+    // Remove the file from the fileList
+    const handleRemove = (fileToRemove) => {
+        const updatedFileList = fileList.filter(file => file.uid !== fileToRemove.uid);
+        setFileList(updatedFileList);
+    };
+
+
+    // Preview the image
     const handlePreview = async file => {
         if (!file.url && !file.preview) {
             file.preview = await new Promise((resolve, reject) => {
@@ -72,14 +84,10 @@ const Upload = () => {
             if (error?.response?.status === 411) {
                 console.log("Token expired, retrying upload");
                 // Retry the upload with the pendingFormData
+                await delay(100);
                 await handleSubmit(e);
             }
         }
-    };
-
-    const handleRemove = (fileToRemove) => {
-        const updatedFileList = fileList.filter(file => file.uid !== fileToRemove.uid);
-        setFileList(updatedFileList);
     };
 
 
@@ -92,6 +100,7 @@ const Upload = () => {
                 onChange={handleFileChange}
                 beforeUpload={() => false} // Prevent automatic upload
                 showUploadList={false} // Disable the default upload list
+                accept='image/jpg, image/jpeg, image/png'
             >
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -99,8 +108,8 @@ const Upload = () => {
                 <p className="ant-upload-text">Click or drag file to this area to upload</p>
             </Dragger>
 
-             {/* Custom file list */}
-             <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {/* Custom file list */}
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
                     {fileList.map(file => (
                         <li key={file.uid} style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
                             <img 
@@ -122,7 +131,7 @@ const Upload = () => {
         {imgUrl && <img src={imgUrl} alt="S3 image" style={{ marginTop: '20px' }} />}
 
         <Modal
-            visible={previewVisible}
+            open={previewVisible}
             footer={null}
             onCancel={() => setPreviewVisible(false)}
         >
