@@ -1,6 +1,6 @@
 const s3 = require('../config/s3Config');
-const File = require('../model/ImageData');
 const { createLog } = require('./imageLogController');
+const { v4: uuidv4 } = require('uuid');
 
 const uploadFile = (req, res) => {
 
@@ -9,9 +9,10 @@ const uploadFile = (req, res) => {
     }
     // Assuming you're using something like multer for file handling
     const file = req?.file
+    const uniqueFileName = `${uuidv4()}-${file.originalname}`;
     const params = {
         Bucket: 'imagebucket-test1',
-        Key: `${file.originalname}`,
+        Key: uniqueFileName,
         Body: file.buffer,
         ContentType: file.mimetype
     };
@@ -21,21 +22,7 @@ const uploadFile = (req, res) => {
             console.error("S3 Upload Error:", err); 
             return res.status(500).json({ error: 'Error uploading to S3' });
         }
-
-        // Use the S3 URL as the image reference
-        const imageReference = data.Location;
-
-        const newFile = new File({
-            url: data.Location,
-            imageReference: imageReference
-        });
-
-        newFile.save((err, savedFile) => {
-            if (err) {
-                return res.status(500).json({ error: 'Error saving to MongoDB' });
-            }
-            res.json({ message: 'Successfully uploaded and saved!', file: savedFile });
-        });
+        res.status(200).send({ ...data, uniqueFileName });
 
         // Create a log entry
         createLog(file.originalname, data.Location, req.user);

@@ -18,10 +18,21 @@ const Upload = () => {
     // delay is used to retry the upload if the token expired and /refresh happened
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    // for now we only allow one file to be uploaded, so we only need to keep track of one file
+    // keep track of all the files that are being uploaded
     const handleFileChange = info => {
+        // let fileList = [...info.fileList];
+        // fileList = fileList.slice(-1);
+        // setFileList(fileList);
         let fileList = [...info.fileList];
         fileList = fileList.slice(-1);
+        fileList = fileList.map(file => {
+            if (file.response) {
+                // Component will show file.url as link
+                file.url = file.response.url;
+            }
+            return file;
+        }
+        );
         setFileList(fileList);
     };
 
@@ -68,10 +79,11 @@ const Upload = () => {
             });
             setUploadStatus(response.data.message);
 
+            // Extract the uniqueFilename from the response
+            const uniqueFileName = response.data.uniqueFileName;
 
-            // Fetch the signed URL immediately after upload
-            const imageName = file.name;
-            const imageUrlResponse = await axiosPrivate.get(`/image/${imageName}`);
+
+            const imageUrlResponse = await axiosPrivate.get(`/image/${uniqueFileName}`);
             setImgUrl(imageUrlResponse.data.url);
             setFileList([]);
 
@@ -105,7 +117,8 @@ const Upload = () => {
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                 </p>
-                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                <p className="ant-upload-text">Click or drag file to this area to upload.</p>
+                <p className='ant-upload-text'>Click on the uploaded image thumbnail to preview the image. </p>
             </Dragger>
 
             {/* Custom file list */}
