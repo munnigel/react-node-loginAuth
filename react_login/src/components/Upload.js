@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Upload as AntUpload, Button, message, Modal, Space, Spin } from 'antd';
@@ -21,7 +21,6 @@ const Upload = () => {
     // keep track of all the files that are being uploaded
     const handleFileChange = info => {
         let fileList = [...info.fileList];
-        // fileList = fileList.slice(-1);
         setFileList(fileList);
     };
 

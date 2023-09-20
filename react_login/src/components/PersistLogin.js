@@ -27,12 +27,10 @@ const PersistLogin = () => {
       console.log('Refresh token still exists. Refreshing access token from refresh page')
       verifyRefreshToken();
     }
-
   }, []);
 
   useEffect(() => {
     console.log("isLoading: ", isLoading)
-    console.log(`aT: ${JSON.stringify(auth?.accessToken)}`)
   }, [isLoading]);
 
 

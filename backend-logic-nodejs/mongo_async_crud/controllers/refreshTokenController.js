@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
-    console.log(cookies)
     if (!cookies?.jwt) return res.sendStatus(401);
     const refreshToken = cookies.jwt;
 
@@ -16,6 +15,7 @@ const handleRefreshToken = async (req, res) => {
         (err, decoded) => {
             if (err || foundUser.username !== decoded.username) return res.sendStatus(403); // in the very small chance where username in payload is different from username in db
             const roles = Object.values(foundUser.roles);
+            const username = foundUser.username;
             const accessToken = jwt.sign(
                 {
                     "UserInfo": {
@@ -26,7 +26,7 @@ const handleRefreshToken = async (req, res) => {
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: '10s' }
             );
-            res.json({ roles, accessToken })
+            res.json({ username, roles, accessToken })
             console.log("New Access Token:", accessToken)
         }
     );

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const fileUploadController = require('../controllers/imageController');
+const imageLogController = require('../controllers/imageLogController');
 const verifyJWT = require('../middleware/verifyJWT');
 
 const storage = multer.memoryStorage();
@@ -23,5 +24,6 @@ const upload = multer({
 
 router.post('/upload', upload.array('file'), verifyJWT, fileUploadController.uploadFile);
 router.get('/', fileUploadController.getFile);
+router.post('/logs', verifyJWT, imageLogController.getAllLogs)
 
 module.exports = router;

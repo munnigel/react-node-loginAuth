@@ -1,7 +1,6 @@
 import Layout from './components/Layout';
 import Register from './components/Register';
 import Login from './components/Login';
-import LinkPage from './components/LinkPage';
 import Home from './components/Home';
 import UploadPage from './components/Upload';
 import Missing from './components/Missing';
@@ -9,6 +8,7 @@ import RequireAuth from './components/RequireAuth';
 import Admin from './components/Admin';
 import Unauthorized from './components/Unauthorized';
 import PersistLogin from './components/PersistLogin';
+import Logs from './components/Logs';
 
 import {Routes, Route} from 'react-router-dom';
 
@@ -26,7 +26,6 @@ function App() {
         {/* Public Routes */}
         <Route path="register" element={<Register/>}/>
         <Route path="login" element={<Login/>}/>
-        <Route path="linkpage" element={<LinkPage/>}/>
         <Route path="unauthorized" element={<Unauthorized/>} /> 
 
         {/* Persist Login */}
@@ -40,6 +39,9 @@ function App() {
           </Route>
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
             <Route path="admin" element={<Admin/>}/>
+          </Route>
+          <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
+            <Route path="logs" element={<Logs/>}/>
           </Route>
         </Route>
         
