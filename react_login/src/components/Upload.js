@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { Upload as AntUpload, Button, message, Modal, Space, Spin } from 'antd';
+import { Upload as AntUpload, Button, message, Modal, Space, Spin, Steps } from 'antd';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Dragger } = AntUpload;
@@ -14,6 +14,24 @@ const Upload = () => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [current, setCurrent] = useState(0);
+
+    const steps = [
+        {
+            title: 'Select images',
+        },
+        {
+            title: 'Preview Images',
+        },
+        {
+            title: 'Done',
+        },
+    ];
+
+    const items = steps.map((item) => ({
+        key: item.title,
+        title: item.title,
+    }));
 
     // delay is used to retry the upload if the token expired and /refresh happened
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -21,6 +39,7 @@ const Upload = () => {
     // keep track of all the files that are being uploaded
     const handleFileChange = info => {
         let fileList = [...info.fileList];
+        setCurrent(1);
         setFileList(fileList);
     };
 
@@ -28,6 +47,9 @@ const Upload = () => {
     const handleRemove = (fileToRemove) => {
         const updatedFileList = fileList.filter(file => file.uid !== fileToRemove.uid);
         setFileList(updatedFileList);
+        if (updatedFileList.length === 0) {
+            setCurrent(0);
+        }
     };
 
 
@@ -53,7 +75,7 @@ const Upload = () => {
             message.error("Please select files before uploading.");
             return;
         }
-
+        setCurrent(2);
         const formData = new FormData();
         fileList.forEach((fileItem, index) => {
             formData.append(`file`, fileItem.originFileObj);
@@ -99,6 +121,7 @@ const Upload = () => {
 
     return (
         <section>
+        <Steps size='small' current={current} items={items} style={{marginBottom: '5%'}}/>
         <div>
             <Dragger
                 fileList={fileList}

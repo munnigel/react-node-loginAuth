@@ -14,7 +14,7 @@ html {
 
 body {
     min-height: 100vh;
-    background-color: #2F3D7E;
+    background-color: #F5F8FF;
 }
 
 .App {
@@ -34,7 +34,15 @@ section {
     flex-direction: column;
     justify-content: flex-start;
     padding: 1rem;
-    background-color: #FAEAEB;
+    background-color: #FFF;
+    /* Rounded corners */
+    border-radius: 10px;
+
+    /* Thin border line */
+    border: 1px solid #ccc;
+
+    /* Shadows evenly from all directions */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 form {
