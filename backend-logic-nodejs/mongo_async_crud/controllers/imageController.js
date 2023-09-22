@@ -2,41 +2,18 @@ const s3 = require('../config/s3Config');
 const { createLog } = require('./imageLogController');
 const { v4: uuidv4 } = require('uuid');
 const url = require('url');  
+const axios = require('axios');
+const FormData = require('form-data');
 
 const uploadFile = async (req, res) => {
-
-    // if (!req.files || req.files.length === 0) {
-    //     return res.status(411).json({ error: 'No file uploaded' });
-    // }
-    
-    // const file = req?.file
-    // const uniqueFileName = `${uuidv4()}-${file.originalname}`;
-    // const params = {
-    //     Bucket: 'imagebucket-test1',
-    //     Key: uniqueFileName,
-    //     Body: file.buffer,
-    //     ContentType: file.mimetype
-    // };
-
-    // s3.upload(params, (err, data) => {
-    //     if (err) {
-    //         console.error("S3 Upload Error:", err); 
-    //         return res.status(500).json({ error: 'Error uploading to S3' });
-    //     }
-    //     res.status(200).send({ ...data, uniqueFileName });
-
-    //     // Create a log entry
-    //     createLog(file.originalname, data.Location, req.user);
-    // });
-
-
-    // res.status(200).json({ message: 'Files uploaded successfully', files: uploadedFiles });
     try {
         if (!req.files || req.files.length === 0) {
             return res.status(411).json({ error: 'No files uploaded' });
         }
 
         const uploadedFiles = [];
+        const predictions = [];
+
         for (let file of req.files) {
             const uniqueFileName = uuidv4() + "-" + file.originalname;
 
@@ -49,16 +26,25 @@ const uploadFile = async (req, res) => {
 
             const data = await s3.upload(params).promise();
             uploadedFiles.push(data.Location);
+
+            const formData = new FormData();
+            formData.append('file', file.buffer, file.originalname);
+
+            const response = await axios.post('http://localhost:8000/api/predict/', formData, {
+                headers: formData.getHeaders(),
+            });
+
+            predictions.push(response.data);
+
             // Create a log entry
             createLog(file.originalname, data.Location, req.user);
         }
-
-        res.status(200).json({ message: 'Files uploaded successfully', files: uploadedFiles });
+        console.log("Predictions:", predictions);
+        res.status(200).json({ message: 'Files uploaded successfully', files: uploadedFiles, predictions });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-
 };
 
 const getFile = (req, res) => {
@@ -102,9 +88,6 @@ const getFile = (req, res) => {
             }
         });
     });
-    
-
-    
 }
 
 module.exports = { uploadFile, getFile };

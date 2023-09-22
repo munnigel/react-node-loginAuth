@@ -15,6 +15,9 @@ const Upload = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
     const [current, setCurrent] = useState(0);
+    const [emotions, setEmotions] = useState([]); // ['happy', 'sad', 'angry', 'neutral', 'surprise', 'fear', 'disgust']
+    const [confidence, setConfidence] = useState([]);
+    
 
     const steps = [
         {
@@ -38,9 +41,16 @@ const Upload = () => {
 
     // keep track of all the files that are being uploaded
     const handleFileChange = info => {
-        let fileList = [...info.fileList];
+        console.log(info)
+        const isRepeated = fileList.some(file => file.size === info.file.size && file.name === info.file.name);
+        if (isRepeated) {
+            message.error("File already uploaded.");
+            return;
+        }
+   
         setCurrent(1);
-        setFileList(fileList);
+        setFileList([...info.fileList]);
+        console.log(fileList)
     };
 
     // Remove the file from the fileList
@@ -93,11 +103,17 @@ const Upload = () => {
                 }
             });
 
+
             const uniqueFileNames = response.data.files.join(',');
 
             const imageUrlResponse = await axiosPrivate.get(`/image?imageNames=${uniqueFileNames}`);
+
             // Assuming the backend returns an array of URLs
             setImgUrls(imageUrlResponse.data.urls);
+
+            // Set the predictions
+            setEmotions(response.data.predictions.map(pred => pred.emotion));
+            setConfidence(response.data.predictions.map(pred => pred.confidence));
 
             setFileList([]);
             setUploadProgress(0);
@@ -166,7 +182,17 @@ const Upload = () => {
         )}
 
         {imgUrls.map((url, index) => (
-            <img key={index} src={url} alt={`S3 image ${index}`} style={{ marginTop: '20px', marginRight: '10px' }} />
+            <>
+                <img key={index} src={url} alt={`S3 image ${index}`} style={{ marginTop: '20px', marginRight: '10px' }} />
+                
+                {emotions[index] && (
+                    <div style={{ marginTop: '20px' }} key={index**2*100 + 1}>
+                        <strong>Predicted Emotion:</strong> {emotions[index]}
+                        <br />
+                        <strong>Confidence:</strong> {Math.round(confidence[index] * 100)}%
+                    </div>
+                )}
+            </>
         ))}
 
 

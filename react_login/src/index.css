@@ -37,12 +37,11 @@ section {
     background-color: #FFF;
     /* Rounded corners */
     border-radius: 10px;
-
     /* Thin border line */
     border: 1px solid #ccc;
-
     /* Shadows evenly from all directions */
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+
 }
 
 form {

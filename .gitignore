@@ -1,3 +1,6 @@
 react_login/node_modules
 backend-logic-nodejs/mongo_async_crud/node_modules
 backend-logic-nodejs/mongo_async_crud/.env
+backend-logic-nodejs/fastapi_ML/__pycache__
+backend-logic-nodejs/fastapi_ML/routers/__pycache__
+backend-logic-nodejs/fastapi_ML/venv

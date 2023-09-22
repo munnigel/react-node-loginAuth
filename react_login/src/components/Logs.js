@@ -16,6 +16,7 @@ const Logs = () => {
             try {
                 const response = await axiosPrivate.post('/image/logs', { username: auth.user })
                 setLogs(response.data)
+                console.log(response.data)
             
             } catch (error) {
                 console.error(error)
