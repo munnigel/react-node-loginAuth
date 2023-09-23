@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Upload as AntUpload, Button, message, Modal, Space, Spin, Steps } from 'antd';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
+import HeaderMenu from './subcomponents/HeaderMenu';
 
 const { Dragger } = AntUpload;
 
@@ -136,6 +137,8 @@ const Upload = () => {
 
 
     return (
+        <>
+        <HeaderMenu style={{position: 'absolute', top: '0'}}/>
         <section>
         <Steps size='small' current={current} items={items} style={{marginBottom: '5%'}}/>
         <div>
@@ -209,6 +212,7 @@ const Upload = () => {
             <Link to="/">Home</Link>
         </div>
     </section>
+    </>
 );
 }
 

@@ -25,7 +25,7 @@ const Logs = () => {
         getLogs()
     }, [])
 
-  return (
+    return (
     <section>
         <div>Logs for {auth.user}</div>
         <ul>
