@@ -4,3 +4,4 @@ backend-logic-nodejs/mongo_async_crud/.env
 backend-logic-nodejs/fastapi_ML/__pycache__
 backend-logic-nodejs/fastapi_ML/routers/__pycache__
 backend-logic-nodejs/fastapi_ML/venv
+backend-logic-nodejs/fastapi_ML/.env

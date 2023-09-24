@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import useRefreshToken from "../hooks/useRefreshToken";
 import AuthContext from "../context/authContext";
 import useLocalStorage from "../hooks/useLocalStorage";
+import HeaderMenu from "./subcomponents/HeaderMenu";
 
 const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +39,7 @@ const PersistLogin = () => {
   // if persist is true, then we will render the outlet if isLoading is false, otherwise we will render a loading message
   return (
     <>
+      <HeaderMenu />
       {!persist ?
         <Outlet /> :
       isLoading ? (<p>Loading ...</p>) : (<Outlet />)}

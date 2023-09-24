@@ -18,25 +18,17 @@ body {
 }
 
 .App {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh; 
-    padding: 1rem 0.5rem;
 }
 
 section {
     width: 100%;
-    max-width: 600px;
-    min-height: 500px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: center;
     padding: 1rem;
-    background-color: #FFF;
-    /* Rounded corners */
-    border-radius: 10px;
     /* Thin border line */
     border: 1px solid #ccc;
     /* Shadows evenly from all directions */
@@ -47,8 +39,7 @@ section {
 form {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    flex-grow: 1;
+    justify-content: center;
     padding-bottom: 1rem;
 }
 
@@ -137,4 +128,31 @@ button {
     width: 20px;
     margin: 0 5px 2px 2px;
 }
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 100vh;
+}
+
+.upload {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 5% auto;
+}
+
+.resultsList {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+
 

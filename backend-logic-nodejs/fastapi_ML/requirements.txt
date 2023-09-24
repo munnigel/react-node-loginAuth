@@ -3,3 +3,5 @@ uvicorn
 tensorflow
 Pillow
 python-multipart
+boto3
+python-dotenv

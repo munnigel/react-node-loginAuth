@@ -16,8 +16,7 @@ const Upload = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
     const [current, setCurrent] = useState(0);
-    const [emotions, setEmotions] = useState([]); // ['happy', 'sad', 'angry', 'neutral', 'surprise', 'fear', 'disgust']
-    const [confidence, setConfidence] = useState([]);
+    const [predictions, setPredictions] = useState([]);
     
 
     const steps = [
@@ -81,6 +80,8 @@ const Upload = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setImgUrls([]);
+        setPredictions([]);
 
         if (fileList.length === 0) {
             message.error("Please select files before uploading.");
@@ -107,14 +108,17 @@ const Upload = () => {
 
             const uniqueFileNames = response.data.files.join(',');
 
+
             const imageUrlResponse = await axiosPrivate.get(`/image?imageNames=${uniqueFileNames}`);
 
             // Assuming the backend returns an array of URLs
             setImgUrls(imageUrlResponse.data.urls);
 
             // Set the predictions
-            setEmotions(response.data.predictions.map(pred => pred.emotion));
-            setConfidence(response.data.predictions.map(pred => pred.confidence));
+            // setEmotions(response.data.predictions.map(pred => pred.emotion));
+            // setConfidence(response.data.predictions.map(pred => pred.confidence));
+            // setResponseUrls(response.data.predictions.map(pred => pred.url));
+            setPredictions(response.data.predictions.map(pred => ({"emotion": pred.emotion, "confidence": pred.confidence, "url": pred.url})));
 
             setFileList([]);
             setUploadProgress(0);
@@ -137,82 +141,76 @@ const Upload = () => {
 
 
     return (
-        <>
-        <HeaderMenu style={{position: 'absolute', top: '0'}}/>
-        <section>
-        <Steps size='small' current={current} items={items} style={{marginBottom: '5%'}}/>
-        <div>
-            <Dragger
-                fileList={fileList}
-                onChange={handleFileChange}
-                beforeUpload={() => false} // Prevent automatic upload
-                showUploadList={false} // Disable the default upload list
-                accept='image/jpg, image/jpeg, image/png'
-                multiple={true}
-            >
-                <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">Click or drag file to this area to upload.</p>
-                <p className='ant-upload-text'>Click on the uploaded image thumbnail to preview the image. </p>
-            </Dragger>
+            <div className='upload'>
+                <Steps size='small' current={current} items={items} style={{marginBottom: '5%'}}/>
+                <div>
+                    <Dragger
+                        fileList={fileList}
+                        onChange={handleFileChange}
+                        beforeUpload={() => false} // Prevent automatic upload
+                        showUploadList={false} // Disable the default upload list
+                        accept='image/jpg, image/jpeg, image/png'
+                        multiple={true}
+                    >
+                        <p className="ant-upload-drag-icon">
+                            <InboxOutlined />
+                        </p>
+                        <p className="ant-upload-text">Click or drag file to this area to upload.</p>
+                        <p className='ant-upload-text'>Click on the uploaded image thumbnail to preview the image. </p>
+                    </Dragger>
 
-            {/* Custom file list */}
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-                    {fileList.map(file => (
-                        <li key={file.uid} style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                            <img 
-                                src={URL.createObjectURL(file.originFileObj)} 
-                                alt="thumbnail" 
-                                style={{ width: '50px', height: '50px', marginRight: '10px' }} 
-                                onClick={() => handlePreview(file)}
-                            />
-                            <span style={{ flexGrow: 1, fontSize: '15px' }}>{file.name}</span>
-                            <DeleteOutlined onClick={() => handleRemove(file)} />
-                        </li>
-                    ))}
-                </ul>
+                    {/* Custom file list */}
+                    <ul style={{ listStyleType: 'none', padding: '1%' }}>
+                            {fileList.map(file => (
+                                <li key={file.uid} style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                                    <img 
+                                        src={URL.createObjectURL(file.originFileObj)} 
+                                        alt="thumbnail" 
+                                        style={{ width: '50px', height: '50px', marginRight: '10px' }} 
+                                        onClick={() => handlePreview(file)}
+                                    />
+                                    <span style={{ flexGrow: 1, fontSize: '15px' }}>{file.name}</span>
+                                    <DeleteOutlined onClick={() => handleRemove(file)} />
+                                </li>
+                            ))}
+                        </ul>
 
-            <Button type="primary" onClick={handleSubmit} disabled={fileList.length === 0} style={{ marginTop: '10px', width: '100%' }}>Upload</Button>
-        </div>
+                    <Button type="primary" onClick={handleSubmit} disabled={fileList.length === 0} style={{ marginTop: '10px', width: '100%' }}>Upload</Button>
+                </div>
 
-        {uploadProgress > 0 && (
-            <Space size='large' style={{margin: "50px 0px", display: 'flex', justifyContent: 'Center', alignItems: 'Center'}}>
-                <Spin size='large' >
-                    <div className="content" />
-                </Spin>
-            </Space>
-        )}
-
-        {imgUrls.map((url, index) => (
-            <>
-                <img key={index} src={url} alt={`S3 image ${index}`} style={{ marginTop: '20px', marginRight: '10px' }} />
-                
-                {emotions[index] && (
-                    <div style={{ marginTop: '20px' }} key={index**2*100 + 1}>
-                        <strong>Predicted Emotion:</strong> {emotions[index]}
-                        <br />
-                        <strong>Confidence:</strong> {Math.round(confidence[index] * 100)}%
-                    </div>
+                {uploadProgress > 0 && (
+                    <Space size='large' style={{margin: "50px 0px", display: 'flex', justifyContent: 'Center', alignItems: 'Center'}}>
+                        <Spin size='large' >
+                            <div className="content" />
+                        </Spin>
+                    </Space>
                 )}
-            </>
-        ))}
+
+                {imgUrls.map((url, index) => (
+                    <div className='resultsList'>
+                        <img key={index} src={url} alt={`S3 image ${index}`} style={{width: "100%"}}/>
+                        
+                        {predictions[index]?.emotion && (
+                            <div style={{ marginTop: '20px' }} key={index**2*100 + 1}>
+                                <strong>Predicted Emotion:</strong> {predictions[index].emotion}
+                                <br />
+                                <strong>Confidence:</strong> {Math.round(predictions[index].confidence * 100)}%
+                                <br />
+                                <img src={predictions[index].url} alt={`Response image ${index}`} />
+                            </div>
+                        )}
+                    </div>
+                ))}
 
 
-        <Modal
-            open={previewVisible}
-            footer={null}
-            onCancel={() => setPreviewVisible(false)}
-        >
-            <img alt="preview" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
-
-        <br />
-        <div className="flexGrow" style={{ marginTop: '20px' }}>
-            <Link to="/">Home</Link>
+                <Modal
+                    open={previewVisible}
+                    footer={null}
+                    onCancel={() => setPreviewVisible(false)}
+                >
+                    <img alt="preview" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
         </div>
-    </section>
-    </>
 );
 }
 

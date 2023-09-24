@@ -77,7 +77,7 @@ const Login = () => {
 
 
   return (
-    <section>
+    <section className='login'>
       <p ref={errorRef} className={errMsg ? 'errMsg' : 'offscreen'}>
         {errMsg}
       </p>
@@ -102,7 +102,7 @@ const Login = () => {
           required
           />
 
-          <Button size='large' onClick={handleSubmit}>Sign In</Button>
+          <Button size='large' onClick={handleSubmit} disabled={!pwd || !user}>Sign In</Button>
           <div className='persistCheck'>
             <input 
               type='checkbox' 

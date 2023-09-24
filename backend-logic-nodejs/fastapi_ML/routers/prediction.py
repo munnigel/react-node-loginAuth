@@ -1,12 +1,15 @@
 from fastapi import FastAPI, UploadFile, HTTPException, File, APIRouter
-
-from fastapi.responses import JSONResponse
 from keras.models import model_from_json
+from .awsController import upload_to_s3, create_presigned_url
+from dotenv import load_dotenv
 import numpy as np
 from PIL import Image
 import io
 import os
 
+import uuid
+
+load_dotenv()
 router = APIRouter()
 
 # Load the model
@@ -34,9 +37,18 @@ async def predict(file: UploadFile = File(...)):
         predicted_class = np.argmax(predictions, axis=1)[0]
         emotion = emotions[predicted_class]
         confidence = float(predictions[0][predicted_class])  # Confidence level of the prediction
-        print(emotion, confidence)
+        
+        # Upload test image to s3
+        hemp_path = os.path.join(current_directory, "hemp.jpg")
+        bucket_name = os.getenv("AWS_BUCKET")
+        unique_filename = f"{uuid.uuid4()}_hemp.jpg"
+        upload_to_s3(hemp_path, bucket_name, unique_filename)
+        
+        # Get presigned url
+        presigned_url = create_presigned_url(bucket_name, unique_filename)
+        print(emotion, confidence, presigned_url)
 
-        return {"emotion": emotion, "confidence": confidence}
+        return {"emotion": emotion, "confidence": confidence, "url": presigned_url}
 
     
     except Exception as e:
