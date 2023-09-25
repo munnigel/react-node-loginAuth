@@ -2,10 +2,13 @@ import React from 'react'
 import { useRef, useEffect, useState } from 'react'
 import { faCheck, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {Input, Button, Select} from 'antd'
+import {Link} from 'react-router-dom'
+import AgencySelection from './subcomponents/AgencySelection'
 
 import axios from '../api/axios'
 
-const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/
+const USER_REGEX = /^[^\s@]+$/
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = '/register'
 
@@ -28,6 +31,8 @@ const Register = () => {
   const [errMsg, setErrMsg] = useState('')
   const [success, setSuccess] = useState(false)
 
+  const [agency, setAgency] = useState('Please select agency first')
+
   // focus on user input on page load
   useEffect(() => {
     userRef.current.focus()
@@ -38,6 +43,8 @@ const Register = () => {
     const result = USER_REGEX.test(user)
     setValidName(result)
   }, [user])
+
+
 
   // check if password input is valid and if it matches confirm password input
   useEffect(() => {
@@ -62,9 +69,11 @@ const Register = () => {
       return
     }
 
+    const finalUser = user + agency
+
     try{
       const response = await axios.post(REGISTER_URL,
-        JSON.stringify({user, pwd}),
+        JSON.stringify({finalUser, pwd}),
         {
           headers: {'Content-Type': 'application/json'},
           withCredentials: true
@@ -101,8 +110,17 @@ const Register = () => {
       </p>
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
+        <label htmlFor='agency'>
+          Agency:
+        </label>
+        <AgencySelection
+          id='agency'
+          agency={agency}
+          setAgency={setAgency}
+          reference={userRef}
+        />
         <label htmlFor='username'>
-          UserName:
+          Company Email:
           <span className={validName ? 'valid' : 'hide'}>
             <FontAwesomeIcon icon={faCheck} />
           </span>
@@ -110,19 +128,19 @@ const Register = () => {
             <FontAwesomeIcon icon={faTimes} />
           </span>
         </label>
-        <input
+        <Input
           type='text'
           id='username'
-          ref={userRef}
           autoComplete='off'
           onFocus={() => setUserFocus(true)}
           onBlur={() => setUserFocus(false)}
           onChange={(e) => setUser(e.target.value)}
+          addonAfter={agency}
           required
         />
-        <p className={userFocus && user && !validName ? 'instructions' : 'offscreen'}>
+        <p className={userFocus && !validName ? 'instructions' : 'offscreen'}>
           <FontAwesomeIcon icon={faInfoCircle} />
-          User name must be 4-24 characters. <br/> Must begin with a letter. <br/> Letters, numbers, underscores, hyphens allowed.
+          Only type the first part of your email address (before the @ sign)
         </p>
 
         <label htmlFor='password'>
@@ -134,7 +152,7 @@ const Register = () => {
             <FontAwesomeIcon icon={faTimes} />
           </span>
         </label>
-        <input
+        <Input
           type='password'
           id='password'
           onFocus={() => setPwdFocus(true)}
@@ -157,7 +175,7 @@ const Register = () => {
             <FontAwesomeIcon icon={faTimes} />
           </span>
         </label>
-        <input
+        <Input
           type='password'
           id='confirm_password'
           onFocus={() => setConfirmPwdFocus(true)}
@@ -170,13 +188,13 @@ const Register = () => {
           Must match the first password input data
         </p>
 
-        <button disabled={!validName || !validPwd || !validConfirmPwd}>Sign Up</button>
+        <Button disabled={!validName || !validPwd || !validConfirmPwd} onClick={handleSubmit}>Sign Up</Button>
       </form>
 
       <p>
         Already registered? <br/>
         <span className="line">
-          <a href='/'>Sign In</a>
+          <Link to='/login'>Sign In</Link>
         </span>
       </p>
     </section>

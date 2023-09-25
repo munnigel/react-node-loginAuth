@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Upload as AntUpload, Button, message, Modal, Space, Spin, Steps } from 'antd';
-import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
+import { InboxOutlined, DeleteOutlined, CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import HeaderMenu from './subcomponents/HeaderMenu';
 
 const { Dragger } = AntUpload;
@@ -28,12 +28,14 @@ const Upload = () => {
         },
         {
             title: 'Done',
-        },
+            icon: imgUrls.length > 0 ? <CheckCircleOutlined /> : uploadProgress > 0 ? <LoadingOutlined /> : null
+        }
     ];
 
     const items = steps.map((item) => ({
         key: item.title,
         title: item.title,
+        icon: item.icon
     }));
 
     // delay is used to retry the upload if the token expired and /refresh happened
@@ -41,16 +43,16 @@ const Upload = () => {
 
     // keep track of all the files that are being uploaded
     const handleFileChange = info => {
-        console.log(info)
         const isRepeated = fileList.some(file => file.size === info.file.size && file.name === info.file.name);
         if (isRepeated) {
             message.error("File already uploaded.");
             return;
         }
+        const topPosition = document.getElementById('upload').getBoundingClientRect().top - 40;
+        window.scrollTo({top: topPosition, behavior: 'smooth'});
    
         setCurrent(1);
         setFileList([...info.fileList]);
-        console.log(fileList)
     };
 
     // Remove the file from the fileList
@@ -141,7 +143,7 @@ const Upload = () => {
 
 
     return (
-            <div className='upload'>
+            <div className='upload' id='upload'>
                 <Steps size='small' current={current} items={items} style={{marginBottom: '5%'}}/>
                 <div>
                     <Dragger

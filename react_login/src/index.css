@@ -41,6 +41,7 @@ form {
     flex-direction: column;
     justify-content: center;
     padding-bottom: 1rem;
+    width: 65%
 }
 
 a, a:visited {
@@ -55,6 +56,7 @@ textarea {
   font-size: 22px;
   padding: 0.25rem;
   border-radius: 0.5rem;
+  width: 100%;
 }
 
 label,
@@ -134,7 +136,7 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 40%;
+    width: 50%;
     height: 100vh;
 }
 

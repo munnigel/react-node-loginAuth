@@ -6,6 +6,7 @@ import {Link, useNavigate, useLocation} from 'react-router-dom'
 import useInput from '../hooks/useInput'
 import useToggle from '../hooks/useToggle'
 import { Input, Button } from 'antd';
+import AgencySelection from './subcomponents/AgencySelection'
 
 const LOGIN_URL = '/auth'
 
@@ -27,6 +28,7 @@ const Login = () => {
   const [user, reset, attributeObject] = useInput('user', '')
   const [pwd, setPwd] = useState('')
   const [errMsg, setErrMsg] = useState('')
+  const [agency, setAgency] = useState('Please select agency first')
 
   // setting local storage of key 'persist' and value of true or false based on the checkbox
   const [check, toggleCheck] = useToggle('persist', false)
@@ -42,9 +44,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    const finalUser = user + agency
+
+    console.log(finalUser, pwd)
+
     try {
       const response = await axios.post(LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({ finalUser, pwd }),
         {
           headers: {'Content-Type': 'application/json'},
           withCredentials: true
@@ -64,7 +70,7 @@ const Login = () => {
       if (!err?.response) {
         setErrMsg('No server response')
       } else if (err?.response.status === 400) {
-        setErrMsg('Missing username or password')
+        setErrMsg('Missing username / password / agency')
       } else if (err?.response.status === 401) {
         setErrMsg('Invalid User Name or Password')
       } else {
@@ -83,13 +89,22 @@ const Login = () => {
       </p>
       <h1>Sign In</h1>
       <form>
+        <label htmlFor='agency'>
+          Agency:
+        </label>
+        <AgencySelection
+          id='agency'
+          agency={agency}
+          setAgency={setAgency}
+          reference={userRef}
+        />
         <label htmlFor='username'>Username:</label>
         <Input 
           type='text' 
           id='username' 
-          ref={userRef} 
           autoComplete='off'
           {...attributeObject}
+          addonAfter={agency}
           required
           />
 
@@ -116,7 +131,7 @@ const Login = () => {
       <p>
         Don't have an Account? <br/>
         <span className='line'>
-          <a href='/register'>Sign Up</a>
+          <Link to='/register'>Sign Up</Link>
         </span>
       </p>
     </section>

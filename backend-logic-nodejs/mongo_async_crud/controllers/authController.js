@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');
 // access tokens are sent to client as JSON
 
 const handleLogin = async (req, res) => {
-    const { user, pwd } = req.body;
-    if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
+    const { finalUser, pwd } = req.body;
+    if (!finalUser || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
 
-    const foundUser = await User.findOne({ username: user }).exec();
+    const foundUser = await User.findOne({ username: finalUser }).exec();
     if (!foundUser) return res.status(401).json({"message": "User with that username not found in database"}); //Unauthorized 
     
     // evaluate password 

@@ -46,10 +46,6 @@ app.use('/refresh', require('./routes/refresh'));
 app.use('/logout', require('./routes/logout'));
 
 
-
-
-
-
 // routes, need to have verifyJWT and verifyRoles
 app.use('/image', require('./routes/image'));
 app.use('/users', verifyJWT, require('./routes/api/users'));
