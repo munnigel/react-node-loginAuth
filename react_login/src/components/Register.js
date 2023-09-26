@@ -104,6 +104,7 @@ const Register = () => {
 
 
   return (
+    <div className='loginContainer'>
     <section className='login'>
       <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>
         {errMsg}
@@ -198,6 +199,12 @@ const Register = () => {
         </span>
       </p>
     </section>
+    <div className='image'>
+      <h1>HTX X PixelGuard</h1>
+      <br />
+      <p>Security Like Never Before</p>
+    </div>
+    </div>
   )
 }
 

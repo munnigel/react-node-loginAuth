@@ -28,7 +28,7 @@ const Login = () => {
   const [user, reset, attributeObject] = useInput('user', '')
   const [pwd, setPwd] = useState('')
   const [errMsg, setErrMsg] = useState('')
-  const [agency, setAgency] = useState('Please select agency first')
+  const [agency, setAgency] = useState('Please select agency')
 
   // setting local storage of key 'persist' and value of true or false based on the checkbox
   const [check, toggleCheck] = useToggle('persist', false)
@@ -83,6 +83,7 @@ const Login = () => {
 
 
   return (
+    <div className='loginContainer'>
     <section className='login'>
       <p ref={errorRef} className={errMsg ? 'errMsg' : 'offscreen'}>
         {errMsg}
@@ -135,6 +136,12 @@ const Login = () => {
         </span>
       </p>
     </section>
+    <div className='image'>
+      <h1>HTX X PixelGuard</h1>
+      <br />
+      <p>Security Like Never Before</p>
+    </div>
+    </div>
   )
 }
 

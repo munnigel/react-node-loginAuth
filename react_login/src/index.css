@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 
+
 * {
     margin: 0;
     padding: 0;
@@ -19,6 +20,7 @@ body {
 
 .App {
     min-height: 100vh; 
+
 }
 
 section {
@@ -46,6 +48,25 @@ form {
 
 a, a:visited {
     color: #2F3D7E;
+}
+
+.loginContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.loginContainer > .image {
+    width: 55vw;
+    background-image: url('../public/bg_image_test3.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+    text-align: center;
+    color: aquamarine;
+    padding-top: 5%;
+    border-radius: 40% 0px 0px 40%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 input[type="text"],
@@ -136,8 +157,11 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 50%;
+    width: 45%;
     height: 100vh;
+    backdrop-filter: blur(50px);
+    border: none;
+    box-shadow: none;
 }
 
 .upload {
