@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/authContext'
@@ -8,13 +7,14 @@ const Logs = () => {
     const axiosPrivate = useAxiosPrivate()
     const { auth } = useContext(AuthContext)
     const [logs, setLogs] = useState([])
+    console.log(auth)
   
 
     // run the PORT request to get the logs
     useEffect(() => {
         const getLogs = async () => {
             try {
-                const response = await axiosPrivate.post('/image/logs', { username: auth.user })
+                const response = await axiosPrivate.post('/image/logs', { username: auth.finalUser })
                 setLogs(response.data)
                 console.log(response.data)
             
@@ -27,7 +27,7 @@ const Logs = () => {
 
     return (
     <section>
-        <div>Logs for {auth.user}</div>
+        <div>Logs for {auth.finalUser}</div>
         <ul>
             {logs.map((log, index) => (
                 <li key={index}>
@@ -36,10 +36,6 @@ const Logs = () => {
                 </li>
             ))}
         </ul>
-
-        <div className="flexGrow" style={{ marginTop: '20px' }}>
-            <Link to="/">Home</Link>
-        </div>
     </section>
 );
 }

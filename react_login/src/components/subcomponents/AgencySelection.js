@@ -1,10 +1,10 @@
 import React from 'react';
 import { Select } from 'antd';
 
-const AgencySelection = ({ agency, setAgency, reference }) => {
+const AgencySelection = (children) => {
   const options = [
     {
-      value: '@mom.gov.sg',
+      value: '@yahoo.com.sg',
       label: 'Ministry of Manpower (MOM)',
     },
     {
@@ -32,10 +32,9 @@ const AgencySelection = ({ agency, setAgency, reference }) => {
       options={options}
       required
       filterOption={filterOption}
-      style={{ width: '85%' }}
-      onChange={(value) => setAgency(value)}
-      value={agency}
-      ref={reference}
+      style={{ cursor: 'pointer' }}
+      {...children}
+      ref={children.reference}
     />
   );
 };

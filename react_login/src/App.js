@@ -9,6 +9,7 @@ import Admin from './components/Admin';
 import Unauthorized from './components/Unauthorized';
 import PersistLogin from './components/PersistLogin';
 import Logs from './components/Logs';
+import ResetPassword from './components/ResetPassword';
 
 import {Routes, Route} from 'react-router-dom';
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="register" element={<Register/>}/>
         <Route path="login" element={<Login/>}/>
         <Route path="unauthorized" element={<Unauthorized/>} /> 
+        <Route path="reset/:token" element={<ResetPassword/>} />
 
         {/* Persist Login */}
         <Route element={<PersistLogin/>}>

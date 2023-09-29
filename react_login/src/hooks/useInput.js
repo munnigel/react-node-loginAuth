@@ -1,6 +1,6 @@
 import useLocalStorage from "./useLocalStorage";
 
-const useInput = (key, initValue) => {
+export const useInput = (key, initValue) => {
   const [value, setValue] = useLocalStorage(key, initValue)
 
   const reset = () => {
@@ -15,4 +15,17 @@ const useInput = (key, initValue) => {
   return [value, reset, attributeObject]
 }
 
-export default useInput
+export const useInputAgency = (key, initValue) => {
+  const [value, setValue] = useLocalStorage(key, initValue)
+  const agencyReset = () => {
+    setValue(initValue)
+  }
+
+  const agencyAttributeObject = {
+    value,
+    onChange: (e) => setValue(e)
+  }
+  return [value, agencyReset, agencyAttributeObject]
+}
+
+// export useInput, useInputAgency

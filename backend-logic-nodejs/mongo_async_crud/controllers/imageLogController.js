@@ -22,6 +22,7 @@ const createLog = async (imageName, imageUrl, username) => {
 const getAllLogs = async (req, res) => {
     try {
         const { username } = req.body;
+        console.log(req)
 
         if (!username) {
             return res.status(400).json({ error: 'Username is required' });
@@ -53,9 +54,10 @@ const getAllLogs = async (req, res) => {
                 signedUrl: signedUrls[index]
             };
         });
-
+        console.log('signedURL', signedUrls)
         res.json(logsWithUrls);
     } catch (error) {
+
         console.error("Error fetching logs:", error);
         res.status(500).json({ error: 'Error fetching logs' });
     }

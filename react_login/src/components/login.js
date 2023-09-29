@@ -3,10 +3,11 @@ import { useRef, useEffect, useState, useContext } from 'react'
 import AuthContext from '../context/authContext'
 import axios from '../api/axios'
 import {Link, useNavigate, useLocation} from 'react-router-dom'
-import useInput from '../hooks/useInput'
+// import useInput from '../hooks/useInput'
 import useToggle from '../hooks/useToggle'
-import { Input, Button } from 'antd';
+import { Input, Button, Modal, message } from 'antd';
 import AgencySelection from './subcomponents/AgencySelection'
+import { useInput, useInputAgency } from '../hooks/useInput'
 
 const LOGIN_URL = '/auth'
 
@@ -26,13 +27,15 @@ const Login = () => {
 
   // setting local storage with key 'user' and value of user input
   const [user, reset, attributeObject] = useInput('user', '')
+  const [agency, resetAgency, agencyAttributeObject] = useInputAgency('agency', '')
   const [pwd, setPwd] = useState('')
   const [errMsg, setErrMsg] = useState('')
-  const [agency, setAgency] = useState('Please select agency')
+
+  const [modalIsVisible, setModalIsVisible] = useState(false)
+  const [email, setEmail] = useState('')
 
   // setting local storage of key 'persist' and value of true or false based on the checkbox
   const [check, toggleCheck] = useToggle('persist', false)
-
   useEffect(() => {
     userRef.current.focus()
   }, [])
@@ -46,8 +49,6 @@ const Login = () => {
 
     const finalUser = user + agency
 
-    console.log(finalUser, pwd)
-
     try {
       const response = await axios.post(LOGIN_URL,
         JSON.stringify({ finalUser, pwd }),
@@ -58,8 +59,9 @@ const Login = () => {
       )
       const accessToken = response?.data?.accessToken
       const roles = response?.data?.roles
-      setAuth({user, roles, accessToken})
+      setAuth({finalUser, roles, accessToken})
       reset()
+      resetAgency()
       setPwd('')
 
       // navigate to where the user is coming from or go to home page
@@ -80,6 +82,18 @@ const Login = () => {
     }
   }
 
+  const handleOk = async () => {
+    try {
+        // Make API call to backend to initiate password reset
+        await axios.post('/forgot', { email });
+        message.success('Password reset link has been sent to your email.');
+        setModalIsVisible(false);
+    } catch (error) {
+        message.error('Failed to send reset link. Please try again.');
+        console.error(error);
+    }
+};
+
 
 
   return (
@@ -95,8 +109,7 @@ const Login = () => {
         </label>
         <AgencySelection
           id='agency'
-          agency={agency}
-          setAgency={setAgency}
+          {...agencyAttributeObject}
           reference={userRef}
         />
         <label htmlFor='username'>Username:</label>
@@ -119,14 +132,18 @@ const Login = () => {
           />
 
           <Button size='large' onClick={handleSubmit} disabled={!pwd || !user}>Sign In</Button>
-          <div className='persistCheck'>
-            <input 
-              type='checkbox' 
-              id='persist' 
-              checked={check} 
-              onChange={toggleCheck}
-            />
-            <label htmlFor='persist'>Keep me signed in</label>
+
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'self-start'}}>
+            <div className='persistCheck'>
+              <input 
+                type='checkbox' 
+                id='persist' 
+                checked={check} 
+                onChange={toggleCheck}
+              />
+              <label htmlFor='persist'>Keep me signed in</label>
+            </div>
+            <label style={{fontSize: '0.75rem', marginTop: '10px', cursor: 'pointer'}} onClick={() => setModalIsVisible(true)}>Forgot password?</label>
           </div>
       </form>
       <p>
@@ -135,6 +152,25 @@ const Login = () => {
           <Link to='/register'>Sign Up</Link>
         </span>
       </p>
+      <Modal
+        title="Reset Password"
+        open={modalIsVisible}
+        onOk={handleOk}
+        onCancel={() => setModalIsVisible(false)}
+        footer={[
+          <Button key="submit" type="primary" onClick={handleOk} disabled={!email}>
+            Submit
+          </Button>,
+        ]}
+      >
+        <p>Input email to reset password:</p>
+        <Input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+        />
+      </Modal>
     </section>
     <div className='image'>
       <h1>HTX X PixelGuard</h1>

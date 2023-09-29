@@ -23,4 +23,9 @@
   margin: 0 !important;
 }
 
+.ant-select-selector {
+  cursor: pointer !important;
+}
+
+
 

@@ -2,9 +2,8 @@ import React from 'react'
 import { useRef, useEffect, useState } from 'react'
 import { faCheck, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {Input, Button, Select} from 'antd'
+import {Input, Button, Select, Result} from 'antd'
 import {Link} from 'react-router-dom'
-import AgencySelection from './subcomponents/AgencySelection'
 
 import axios from '../api/axios'
 
@@ -32,6 +31,28 @@ const Register = () => {
   const [success, setSuccess] = useState(false)
 
   const [agency, setAgency] = useState('Please select agency first')
+
+  const options = [
+    {
+      value: '@yahoo.com.sg',
+      label: 'Ministry of Manpower (MOM)',
+    },
+    {
+      value: '@htx.gov.sg',
+      label: 'Home Team Science and Technology Agency (HTX)',
+    },
+    {
+      value: '@ihis.gov.sg',
+      label: 'Integrated Health Information Systems (IHiS)',
+    },
+    {
+      value: '@ica.gov.sg',
+      label: 'Immigration & Checkpoints Authority (ICA)',
+    }
+  ];
+
+  const filterOption = (input, option) =>
+  option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
   // focus on user input on page load
   useEffect(() => {
@@ -80,7 +101,6 @@ const Register = () => {
         }
       )
       if (response.status === 201) {
-        console.log(JSON.stringify(response.data))
         setSuccess(true)
         setUser('')
         setPwd('')
@@ -105,8 +125,9 @@ const Register = () => {
 
   return (
     <div className='loginContainer'>
+    
     <section className='login'>
-      <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>
+      { !success ? (<><p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>
         {errMsg}
       </p>
       <h1>Register</h1>
@@ -114,11 +135,16 @@ const Register = () => {
         <label htmlFor='agency'>
           Agency:
         </label>
-        <AgencySelection
+        <Select
           id='agency'
-          agency={agency}
-          setAgency={setAgency}
+          onChange={(value) => setAgency(value)}
           reference={userRef}
+          showSearch
+          placeholder='Select your agency'
+          options={options}
+          required
+          filterOption={filterOption}
+          ref={userRef}
         />
         <label htmlFor='username'>
           Company Email:
@@ -197,7 +223,20 @@ const Register = () => {
         <span className="line">
           <Link to='/login'>Sign In</Link>
         </span>
-      </p>
+      </p></>) : (
+        <Result
+        status="success"
+        title="Successfully Registered!"
+        subTitle="Please proceed to Login Page to login."
+        extra={[
+          <Link to='/login'>
+            <Button type="primary" value='large' key="console">
+              Go to Login Page
+            </Button>
+          </Link>
+        ]}
+      />
+      )}
     </section>
     <div className='image'>
       <h1>HTX X PixelGuard</h1>
